@@ -1,0 +1,4 @@
+[submodule "resto-coreservice"]
+	path = resto-coreservice
+	url = https://github.com/cao-khanh-hoang-epita/resto-coreservice.git
+	branch = test-dev
