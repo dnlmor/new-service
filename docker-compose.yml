@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./resto-coreservice
+    ports:
+      - "8000:8000"
+    depends_on:
+      - backend
+    environment:
+      - DATABASE_URL=postgresql://postgres:Ahgase07@db:5432/coreservice
+    command: >
+      sh -c "python manage.py runserver"
+
+  frontend:
+    build: ./resto-clientservice
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:16
+    environment:
+      - POSTGRES_DB=coreservice
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Ahgase07
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
