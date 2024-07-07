@@ -1,0 +1,12 @@
+services:
+  crudservice:
+    command: python manage.py runserver 8001
+    directory: ./resto-crudservice
+
+  clientservice:
+    command: npm start
+    directory: ./resto-clientservice
+
+  coreservice:
+    command: python manage.py runserver 8000
+    directory: ./resto-coreservice
