@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const MenuItem = ({ item, onUpdate, onDelete }) => {
+const MenuItem = ({ item, onUpdate, onDelete, onAddToCart }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedItem, setEditedItem] = useState(item);
 
@@ -10,7 +10,7 @@ const MenuItem = ({ item, onUpdate, onDelete }) => {
 
   const handleUpdate = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/contact/menu-items/${item.id}/`, {
+      const response = await fetch(`http://localhost:8000/api/menu/${item.id}/`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editedItem),
@@ -19,6 +19,8 @@ const MenuItem = ({ item, onUpdate, onDelete }) => {
         const updatedItem = await response.json();
         onUpdate(updatedItem);
         setIsEditing(false);
+      } else {
+        throw new Error('Failed to update item');
       }
     } catch (error) {
       console.error('Error updating item:', error);
@@ -27,11 +29,13 @@ const MenuItem = ({ item, onUpdate, onDelete }) => {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/contact/menu-items/${item.id}/`, {
+      const response = await fetch(`http://localhost:8000/api/menu/${item.id}/`, {
         method: 'DELETE',
       });
       if (response.ok) {
         onDelete(item.id);
+      } else {
+        throw new Error('Failed to delete item');
       }
     } catch (error) {
       console.error('Error deleting item:', error);
@@ -40,33 +44,33 @@ const MenuItem = ({ item, onUpdate, onDelete }) => {
 
   if (isEditing) {
     return (
-      <div className="bg-white shadow-lg rounded-lg p-6 m-4">
+      <div className="border p-4 mb-4 rounded">
         <input
           type="text"
           name="name"
           value={editedItem.name}
           onChange={handleChange}
-          className="w-full p-2 mb-2 border rounded"
+          className="w-full mb-2 p-1 border rounded"
         />
         <input
           type="number"
           name="price"
           value={editedItem.price}
           onChange={handleChange}
-          className="w-full p-2 mb-2 border rounded"
+          className="w-full mb-2 p-1 border rounded"
         />
         <textarea
           name="description"
           value={editedItem.description}
           onChange={handleChange}
-          className="w-full p-2 mb-2 border rounded"
+          className="w-full mb-2 p-1 border rounded"
         />
         <input
           type="number"
           name="stocks"
           value={editedItem.stocks}
           onChange={handleChange}
-          className="w-full p-2 mb-2 border rounded"
+          className="w-full mb-2 p-1 border rounded"
         />
         <button onClick={handleUpdate} className="bg-green-500 text-white p-2 rounded mr-2">Save</button>
         <button onClick={() => setIsEditing(false)} className="bg-gray-500 text-white p-2 rounded">Cancel</button>
@@ -75,15 +79,14 @@ const MenuItem = ({ item, onUpdate, onDelete }) => {
   }
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 m-4">
-      <h3 className="text-xl font-bold mb-2">{item.name}</h3>
-      <p className="text-gray-600 mb-4">{item.description}</p>
-      <p className="text-green-600 font-semibold">Price: ${item.price}</p>
-      <p className="text-blue-600">Stocks: {item.stocks}</p>
-      <div className="mt-4">
-        <button onClick={() => setIsEditing(true)} className="bg-yellow-500 text-white p-2 rounded mr-2">Edit</button>
-        <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded">Delete</button>
-      </div>
+    <div className="border p-4 mb-4 rounded">
+      <h3 className="text-xl font-bold">{item.name}</h3>
+      <p>Price: ${item.price}</p>
+      <p>{item.description}</p>
+      <p>In stock: {item.stocks}</p>
+      <button onClick={() => setIsEditing(true)} className="bg-blue-500 text-white p-2 rounded mr-2">Edit</button>
+      <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded mr-2">Delete</button>
+      <button onClick={() => onAddToCart(item)} className="bg-green-500 text-white p-2 rounded">Add to Cart</button>
     </div>
   );
 };

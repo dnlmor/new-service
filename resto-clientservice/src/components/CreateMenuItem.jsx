@@ -10,7 +10,7 @@ const CreateMenuItem = ({ onItemCreated }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8000/contact/menu-items/', {
+      const response = await fetch('http://localhost:8000/api/menu/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(item),
@@ -19,6 +19,8 @@ const CreateMenuItem = ({ onItemCreated }) => {
         const newItem = await response.json();
         onItemCreated(newItem);
         setItem({ name: '', price: '', description: '', stocks: '' });
+      } else {
+        throw new Error('Failed to create item');
       }
     } catch (error) {
       console.error('Error creating item:', error);

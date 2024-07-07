@@ -1,23 +1,52 @@
 version: '3.8'
 
 services:
-  backend:
+  resto-coreservice:
     build: ./resto-coreservice
     ports:
       - "8000:8000"
-    depends_on:
-      - backend
     environment:
-      - DATABASE_URL=postgresql://postgres:Ahgase07@db:5432/coreservice
-    command: >
-      sh -c "python manage.py runserver"
+      - MENU_SERVICE_URL=http://resto-menuservice:8001
+      - CART_SERVICE_URL=http://resto-cartservice:8002
+      - DB_HOST=db
+      - DB_NAME=coreservice
+      - DB_USER=postgres
+      - DB_PASSWORD=Ahgase07
+    depends_on:
+      - db
+      - resto-menuservice
+      - resto-cartservice
 
-  frontend:
+  resto-menuservice:
+    build: ./resto-menuservice
+    ports:
+      - "8001:8001"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=coreservice
+      - DB_USER=postgres
+      - DB_PASSWORD=Ahgase07
+    depends_on:
+      - db
+
+  resto-cartservice:
+    build: ./resto-cartservice
+    ports:
+      - "8002:8002"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=coreservice
+      - DB_USER=postgres
+      - DB_PASSWORD=Ahgase07
+    depends_on:
+      - db
+
+  resto-clientservice:
     build: ./resto-clientservice
     ports:
       - "3000:3000"
     depends_on:
-      - backend
+      - resto-coreservice
 
   db:
     image: postgres:16
@@ -30,3 +59,7 @@ services:
 
 volumes:
   postgres_data:
+
+networks:
+  default:
+    driver: bridge

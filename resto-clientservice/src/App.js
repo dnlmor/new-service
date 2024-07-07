@@ -1,17 +1,18 @@
 import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
 import MenuList from './components/MenuList';
 
-const App = () => {
+function App() {
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <header className="bg-blue-600 text-white py-4">
-        <h1 className="text-3xl font-bold text-center">Restaurant Menu</h1>
-      </header>
-      <main className="py-8">
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-grow container mx-auto px-4 py-8">
         <MenuList />
       </main>
+      <Footer />
     </div>
   );
-};
+}
 
 export default App;
